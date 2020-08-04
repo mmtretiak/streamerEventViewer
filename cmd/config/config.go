@@ -19,3 +19,13 @@ type JWTConfig struct {
 	Secret     string `json:"secret"`
 	TTLMinutes int64  `json:"ttl_minutes"`
 }
+
+// required scope
+// user:read:email
+//
+type OauthConfig struct {
+	RedirectURL  string   `json:"redirect_url"`
+	Scopes       []string `json:"scopes"`
+	ClientID     string   `json:"client_id"`
+	ClientSecret string   `json:"client_secret"`
+}

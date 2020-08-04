@@ -3,7 +3,7 @@ package session
 import (
 	"errors"
 	"fmt"
-	"streamerEventViewer/pkg/internal/models"
+	"streamerEventViewer/pkg/models"
 	"strings"
 	"time"
 
