@@ -7,10 +7,11 @@ import (
 )
 
 func New(config config.DB) (*sql.DB, error) {
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable",
-		config.User, config.Password, config.DBName)
+	dbInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		config.Host, config.Port, config.User, config.Password, config.DBName)
 
-	db, err := sql.Open("postgres", dbinfo)
+	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		return nil, err
 	}

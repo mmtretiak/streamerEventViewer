@@ -43,4 +43,6 @@ type DB struct {
 	Password string `json:"password"`
 	DBName   string `json:"db_name"`
 	Dialect  string `json:"dialect"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
 }
