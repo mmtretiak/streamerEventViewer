@@ -10,7 +10,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-var minSecretLen = 128
+// TODO more secure to use longer secret(at least 128 chars)
+var minSecretLen = 16
 
 // New generates new JWT service necessary for auth middleware
 func New(algo, secret string, ttlMinutes, minSecretLength int) (Service, error) {
