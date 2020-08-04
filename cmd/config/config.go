@@ -32,7 +32,7 @@ type JWTConfig struct {
 // user:read:email
 //
 type OauthConfig struct {
-	RedirectURL  string   `json:"redirect_url"`
+	RedirectURI  string   `json:"redirect_uri"`
 	Scopes       []string `json:"scopes"`
 	ClientID     string   `json:"client_id"`
 	ClientSecret string   `json:"client_secret"`
