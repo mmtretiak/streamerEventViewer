@@ -3,6 +3,7 @@ package session
 import (
 	"errors"
 	"fmt"
+	"streamerEventViewer/cmd/config"
 	"streamerEventViewer/pkg/models"
 	"strings"
 	"time"
@@ -14,24 +15,24 @@ import (
 var minSecretLen = 16
 
 // New generates new JWT service necessary for auth middleware
-func New(algo, secret string, ttlMinutes, minSecretLength int) (Service, error) {
+func New(config config.JWTConfig, minSecretLength int) (Service, error) {
 	if minSecretLength > 0 {
 		minSecretLen = minSecretLength
 	}
 
-	if len(secret) < minSecretLen {
-		return Service{}, fmt.Errorf("jwt secret length is %v, which is less than required %v", len(secret), minSecretLen)
+	if len(config.Secret) < minSecretLen {
+		return Service{}, fmt.Errorf("jwt secret length is %v, which is less than required %v", len(config.Secret), minSecretLen)
 	}
 
-	signingMethod := jwt.GetSigningMethod(algo)
+	signingMethod := jwt.GetSigningMethod(config.Algorithm)
 	if signingMethod == nil {
-		return Service{}, fmt.Errorf("invalid jwt signing method: %s", algo)
+		return Service{}, fmt.Errorf("invalid jwt signing method: %s", config.Algorithm)
 	}
 
 	return Service{
-		key:  []byte(secret),
+		key:  []byte(config.Secret),
 		algo: signingMethod,
-		ttl:  time.Duration(ttlMinutes) * time.Minute,
+		ttl:  time.Duration(config.TTLMinutes) * time.Minute,
 	}, nil
 }
 
@@ -70,5 +71,4 @@ func (s Service) GenerateToken(u models.User) (string, error) {
 		"e":   u.Email,
 		"exp": time.Now().Add(s.ttl).Unix(),
 	}).SignedString(s.key)
-
 }

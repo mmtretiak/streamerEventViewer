@@ -8,10 +8,22 @@ func New() Config {
 			Secret:    "testkeyforsignig",
 		},
 		DB: DB{
-			User:     "postgres",
+			User:     "mmtretiak",
 			Password: "postgres",
 			Dialect:  "postgres",
 			DBName:   "develop",
+			Port:     5432,
+			Host:     "localhost",
+		},
+		OauthConfig: OauthConfig{
+			RedirectURI:  "http://localhost:8080/users/login/redirect",
+			Scopes:       []string{"user:read:email"},
+			ClientID:     "k9rce279ezyjl3tafvhvza6pvj55cb",
+			ClientSecret: "c60qyyfj3tijxsnau2mqy9ecpqfcl2",
+		},
+		Server: Server{
+			Port: 8080,
+			Host: "localhost",
 		},
 	}
 }
@@ -20,6 +32,7 @@ type Config struct {
 	JWTConfig   JWTConfig   `json:"jwt_config"`
 	OauthConfig OauthConfig `json:"oauth_config"`
 	DB          DB          `json:"db"`
+	Server      Server      `json:"server"`
 }
 
 type JWTConfig struct {
@@ -45,4 +58,9 @@ type DB struct {
 	Dialect  string `json:"dialect"`
 	Host     string `json:"host"`
 	Port     int    `json:"port"`
+}
+
+type Server struct {
+	Port int    `json:"port"`
+	Host string `json:"host"`
 }
