@@ -7,6 +7,12 @@ import (
 	"streamerEventViewer/pkg/models"
 )
 
+func New(db *sql.DB) models.UserSecretRepository {
+	return &repository{
+		db: db,
+	}
+}
+
 type repository struct {
 	db *sql.DB
 }
