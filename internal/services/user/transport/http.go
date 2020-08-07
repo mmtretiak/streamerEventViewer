@@ -24,7 +24,8 @@ func NewHTTP(svc user.Service, r *echo.Group) {
 func (h *HTTP) login(c echo.Context) error {
 	err := h.svc.Login(c)
 	if err != nil {
-		return err
+		// TODO provide better error codes
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -33,7 +34,8 @@ func (h *HTTP) login(c echo.Context) error {
 func (h *HTTP) redirect(c echo.Context) error {
 	token, err := h.svc.Redirect(c)
 	if err != nil {
-		return err
+		// TODO provide better error codes
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusOK, &token)
