@@ -154,6 +154,7 @@ func (s *service) searchForStreamer(streamerName string) (searchResponse, error)
 			found = true
 		}
 	}
+
 	// TODO make suggestion in better way, for example return them as separate field instead of error and parse on front-end
 	if len(resp.Data.Channels) > 1 && !found {
 		errMsg := "please specify streamer name, suggestions %v"

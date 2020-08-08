@@ -20,7 +20,7 @@ func (r *repository) Save(ctx context.Context, userToStreamer models.UserToStrea
 	query := `
 INSERT INTO users_to_streamers(
 	user_id,
-	streamer_id,
+	streamer_id)
 VALUES ($1, $2);
 `
 	_, err := r.db.ExecContext(ctx, query, userToStreamer.UserID, userToStreamer.StreamerID)

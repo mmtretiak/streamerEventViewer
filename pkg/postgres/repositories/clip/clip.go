@@ -23,7 +23,7 @@ INSERT INTO clips(
 	user_id,
     streamer_id,
     external_id,
-    edit_url
+    edit_url)
 VALUES ($1, $2, $3, $4, $5);
 `
 	_, err := r.db.ExecContext(ctx, query, clip.ID, clip.UserID, clip.StreamerID, clip.ExternalID, clip.EditURL)

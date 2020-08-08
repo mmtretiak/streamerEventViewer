@@ -21,7 +21,7 @@ func (r *repository) Save(ctx context.Context, streamer models.Streamer) error {
 INSERT INTO streamers(
 	id, 
 	name,
-    external_id,
+    external_id)
 VALUES ($1, $2, $3);
 `
 	_, err := r.db.ExecContext(ctx, query, streamer.ID, streamer.Name, streamer.ExternalID)
