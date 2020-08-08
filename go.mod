@@ -8,7 +8,7 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/lib/pq v1.8.0
-	github.com/nicklaw5/helix v0.5.9
+	github.com/nicklaw5/helix v0.6.0
 	github.com/valyala/fasttemplate v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7 // indirect

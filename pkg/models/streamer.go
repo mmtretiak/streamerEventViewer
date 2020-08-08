@@ -10,6 +10,7 @@ type StreamerRepository interface {
 }
 
 type Streamer struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	ExternalID string `json:"external_id"`
 }

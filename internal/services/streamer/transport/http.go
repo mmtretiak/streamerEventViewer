@@ -25,10 +25,9 @@ func NewHTTP(svc streamer.Service, r *echo.Group, jwtMiddleware echo.MiddlewareF
 func (h *HTTP) saveStreamer(c echo.Context) error {
 	streamerName := c.Param("name")
 
-	err := h.svc.SaveStreamer(c, streamerName)
+	status, err := h.svc.SaveStreamer(c, streamerName)
 	if err != nil {
-		// TODO provide better error codes
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(status, err)
 	}
 
 	return c.NoContent(http.StatusOK)
