@@ -36,11 +36,7 @@ func (v *viewUpdater) Run() {
 		return
 	}
 
-	err = v.updateClipViews(ctx, clips)
-	if err != nil {
-		v.logger.Error(err)
-		return
-	}
+	v.updateClipViews(ctx, clips)
 }
 
 func (v *viewUpdater) getClips(ctx context.Context) ([]helix.Clip, error) {
@@ -69,9 +65,12 @@ func (v *viewUpdater) getClips(ctx context.Context) ([]helix.Clip, error) {
 	return resp.Data.Clips, nil
 }
 
-func (v *viewUpdater) updateClipViews(ctx context.Context, clips []helix.Clip) error {
+func (v *viewUpdater) updateClipViews(ctx context.Context, clips []helix.Clip) {
 	// TODO investigate bulk update
 	for _, clip := range clips {
-		v.clipRepository.UpdateViewCountByExternalID(ctx, clip.ID, clip.ViewCount)
+		err := v.clipRepository.UpdateViewCountByExternalID(ctx, clip.ID, clip.ViewCount)
+		if err != nil {
+			v.logger.Errorf("failed to update clip with external id %s, reason: %v", clip.ID, err)
+		}
 	}
 }

@@ -49,7 +49,7 @@ SELECT id, external_id, edit_url, view_count FROM clips WHERE user_id = $1 AND s
 		var id string
 		var externalID string
 		var editURL string
-		var viewCount int64
+		var viewCount int
 
 		err := rows.Scan(&id, &externalID, &editURL, &viewCount)
 		if err != nil {
@@ -73,7 +73,7 @@ func (r *repository) GetAll(ctx context.Context) ([]models.Clip, error) {
 	query := `
 SELECT id, external_id, edit_url, user_id, streamer_id views FROM clips;
 `
-	rows, err := r.db.QueryContext(ctx, query, userID, streamerID)
+	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
