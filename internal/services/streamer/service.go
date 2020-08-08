@@ -19,12 +19,13 @@ type Service interface {
 }
 
 func New(rbacService rbac.RBACService, streamerRepository models.StreamerRepository,
-	usersToStreamersRepository models.UsersToStreamerRepository, logger echo.Logger) Service {
+	usersToStreamersRepository models.UsersToStreamerRepository, helixService helixService.Service, logger echo.Logger) Service {
 	return &service{
 		rbac:                      rbacService,
 		streamerRepository:        streamerRepository,
 		usersToStreamerRepository: usersToStreamersRepository,
 		logger:                    logger,
+		helixService:              helixService,
 	}
 }
 

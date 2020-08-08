@@ -55,7 +55,7 @@ func main() {
 	authMiddleware := auth.Middleware(jwt)
 
 	userService := user.New(helixService, userRepository, userSecretRepository, jwt, logger)
-	streamerService := streamer.New(rbacService, streamerRepository, userToStreamerRepository, logger)
+	streamerService := streamer.New(rbacService, streamerRepository, userToStreamerRepository, helixService, logger)
 	clipService := clip.New(helixService, rbacService, userSecretRepository, clipRepository, streamerRepository, logger)
 
 	eGroup := e.Group("")
