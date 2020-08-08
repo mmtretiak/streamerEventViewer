@@ -6,8 +6,8 @@ CREATE TABLE streamers (
 
 CREATE TABLE users_to_streamers(
   id varchar(256),
-  user_id varchar(256) UNIQUE NOT NULL,
-  streamer_id varchar(256) UNIQUE NOT NULL,
+  user_id varchar(256) NOT NULL,
+  streamer_id varchar(256) NOT NULL,
   CONSTRAINT fk_streamers_users_user_id
       FOREIGN KEY(user_id)
           REFERENCES users(id),
