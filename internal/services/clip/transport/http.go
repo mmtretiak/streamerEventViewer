@@ -25,6 +25,7 @@ func NewHTTP(svc clip.Service, r *echo.Group, jwtMiddleware echo.MiddlewareFunc)
 
 	views.GET("", h.getTotalViews)
 	views.GET("/{id}", h.getTotalViewsByStreamer)
+	views.GET("/perStreamer", h.getTotalViewsPerStreamer)
 }
 
 func (h *HTTP) saveClip(c echo.Context) error {
@@ -57,11 +58,7 @@ func (h *HTTP) getTotalViewsByStreamer(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := clip.TotalViewsResp{
-		Total: total,
-	}
-
-	return c.JSON(http.StatusOK, resp)
+	return c.JSON(http.StatusOK, total)
 }
 
 func (h *HTTP) getTotalViews(c echo.Context) error {
@@ -70,9 +67,14 @@ func (h *HTTP) getTotalViews(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	resp := clip.TotalViewsResp{
-		Total: total,
+	return c.JSON(http.StatusOK, total)
+}
+
+func (h *HTTP) getTotalViewsPerStreamer(c echo.Context) error {
+	perStreamer, err := h.svc.GetTotalViewsPerStreamer(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, resp)
+	return c.JSON(http.StatusOK, perStreamer)
 }
