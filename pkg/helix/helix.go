@@ -33,6 +33,7 @@ func (h *helixService) NewAppClient() (*helix.Client, error) {
 		return nil, err
 	}
 
+	// TODO this not needed for all calls through this app client, so should move this creation into separate method of service
 	resp, err := client.GetAppAccessToken()
 	if err != nil {
 		return nil, err
