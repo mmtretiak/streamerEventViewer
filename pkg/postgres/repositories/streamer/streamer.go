@@ -84,3 +84,29 @@ SELECT id FROM streamers WHERE name = $1;
 
 	return streamer, nil
 }
+
+func (r *repository) GetByUserID(ctx context.Context, userID string) ([]models.Streamer, error) {
+	query := `
+SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers on streamers.id = users_to_streamers.streamer_id WHERE user_id = $1
+`
+	rows, err := r.db.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []models.Streamer
+
+	for rows.Next() {
+		var id string
+		var name string
+
+		err := rows.Scan(&id, name)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, models.Streamer{ID: id, Name: name})
+	}
+
+	return result, nil
+}

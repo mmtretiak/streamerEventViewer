@@ -10,10 +10,15 @@ import (
 
 type Service interface {
 	SaveStreamer(c echo.Context, streamerName string) error
+	GetStreamersForUser(echo.Context) ([]models.Streamer, error)
 }
 
-func New() Service {
-	return &service{}
+func New(rbacService rbac.RBACService, streamerRepository models.StreamerRepository, usersToStreamersRepository models.UsersToStreamerRepository) Service {
+	return &service{
+		rbac:                      rbacService,
+		streamerRepository:        streamerRepository,
+		usersToStreamerRepository: usersToStreamersRepository,
+	}
 }
 
 type service struct {
@@ -65,4 +70,17 @@ func (s *service) createStreamer(ctx context.Context, streamerName string) (mode
 	}
 
 	return streamer, nil
+}
+
+func (s *service) GetStreamersForUser(c echo.Context) ([]models.Streamer, error) {
+	user := s.rbac.User(c)
+
+	ctx := context.Background()
+
+	streamers, err := s.streamerRepository.GetByUserID(ctx, user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return streamers, nil
 }
