@@ -1,5 +1,7 @@
 package config
 
+import "github.com/robfig/cron/v3"
+
 // for now simply return mocked structure instead of reading from config file or cloud secrets
 func New() Config {
 	return Config{
@@ -26,6 +28,14 @@ func New() Config {
 			Port: 8080,
 			Host: "localhost",
 		},
+		Jobs: Jobs{
+			ViewUpdaterJob: ViewUpdaterJob{
+				Schedule: &cron.SpecSchedule{
+					Hour:   12,
+					Minute: 0,
+				},
+			},
+		},
 	}
 }
 
@@ -34,6 +44,7 @@ type Config struct {
 	OauthConfig OauthConfig `json:"oauth_config"`
 	DB          DB          `json:"db"`
 	Server      Server      `json:"server"`
+	Jobs        Jobs        `json:"jobs"`
 }
 
 type JWTConfig struct {
@@ -64,4 +75,12 @@ type DB struct {
 type Server struct {
 	Port int    `json:"port"`
 	Host string `json:"host"`
+}
+
+type Jobs struct {
+	ViewUpdaterJob ViewUpdaterJob `json:"view_updater_job"`
+}
+
+type ViewUpdaterJob struct {
+	Schedule *cron.SpecSchedule `json:"schedule"`
 }

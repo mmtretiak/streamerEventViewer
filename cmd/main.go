@@ -12,6 +12,7 @@ import (
 	userTransport "streamerEventViewer/internal/services/user/transport"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/middleware/auth"
+	"streamerEventViewer/pkg/middleware/secure"
 	"streamerEventViewer/pkg/postgres"
 	clipRepo "streamerEventViewer/pkg/postgres/repositories/clip"
 	streamerRepo "streamerEventViewer/pkg/postgres/repositories/streamer"
@@ -52,6 +53,8 @@ func main() {
 	clipService := clip.New(helixService, rbacService, userSecretRepository, clipRepository, streamerRepository)
 
 	e := echo.New()
+	e.Use(secure.CORS(), secure.Headers())
+
 	eGroup := e.Group("")
 
 	userTransport.NewHTTP(userService, eGroup)
