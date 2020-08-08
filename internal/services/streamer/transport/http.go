@@ -27,7 +27,7 @@ func (h *HTTP) saveStreamer(c echo.Context) error {
 
 	status, err := h.svc.SaveStreamer(c, streamerName)
 	if err != nil {
-		return c.JSON(status, err)
+		return c.JSON(status, err.Error())
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -37,7 +37,7 @@ func (h *HTTP) getStreamers(c echo.Context) error {
 	streamers, err := h.svc.GetStreamersForUser(c)
 	if err != nil {
 		// TODO provide better error codes
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, streamers)

@@ -30,7 +30,7 @@ func (h *HTTP) saveClip(c echo.Context) error {
 
 	err := h.svc.SaveClip(c, externalStreamerID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.NoContent(http.StatusOK)
@@ -41,7 +41,7 @@ func (h *HTTP) getClipsForStreamer(c echo.Context) error {
 
 	clips, err := h.svc.GetClipsForStreamer(c, streamerID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, clips)
