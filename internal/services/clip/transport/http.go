@@ -18,14 +18,14 @@ func NewHTTP(svc clip.Service, r *echo.Group, jwtMiddleware echo.MiddlewareFunc)
 	ur := r.Group("/clips")
 	ur.Use(jwtMiddleware)
 
-	ur.POST("/{id}", h.saveClip)
-	ur.GET("/{id}", h.getClipsForStreamer)
+	ur.POST("/:id", h.saveClip)
+	ur.GET("/:id", h.getClipsForStreamer)
 
 	views := ur.Group("/views")
 
 	views.GET("", h.getTotalViews)
-	views.GET("/{id}", h.getTotalViewsByStreamer)
-	views.GET("/perStreamer", h.getTotalViewsPerStreamer)
+	views.GET("/:id", h.getTotalViewsByStreamer)
+	views.GET("/perStreamer/", h.getTotalViewsPerStreamer)
 }
 
 func (h *HTTP) saveClip(c echo.Context) error {

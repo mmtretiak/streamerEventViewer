@@ -18,7 +18,7 @@ func NewHTTP(svc streamer.Service, r *echo.Group, jwtMiddleware echo.MiddlewareF
 	ur := r.Group("/streamers")
 	ur.Use(jwtMiddleware)
 
-	ur.POST("/{name}", h.saveStreamer)
+	ur.POST("/:name", h.saveStreamer)
 	ur.GET("", h.getStreamers)
 }
 
