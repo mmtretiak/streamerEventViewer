@@ -4,8 +4,9 @@ package config
 func New() Config {
 	return Config{
 		JWTConfig: JWTConfig{
-			Algorithm: "HS256",
-			Secret:    "testkeyforsignig",
+			Algorithm:  "HS256",
+			Secret:     "testkeyforsignig",
+			TTLMinutes: 10080, // 7 days for now
 		},
 		DB: DB{
 			User:     "mmtretiak",
