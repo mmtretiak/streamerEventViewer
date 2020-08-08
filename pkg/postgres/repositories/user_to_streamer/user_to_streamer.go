@@ -19,11 +19,12 @@ type repository struct {
 func (r *repository) Save(ctx context.Context, userToStreamer models.UserToStreamer) error {
 	query := `
 INSERT INTO users_to_streamers(
+	id,
 	user_id,
 	streamer_id)
-VALUES ($1, $2);
+VALUES ($1, $2, $3);
 `
-	_, err := r.db.ExecContext(ctx, query, userToStreamer.UserID, userToStreamer.StreamerID)
+	_, err := r.db.ExecContext(ctx, query, userToStreamer.ID, userToStreamer.UserID, userToStreamer.StreamerID)
 	if err != nil {
 		return err
 	}

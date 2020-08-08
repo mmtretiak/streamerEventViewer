@@ -58,6 +58,7 @@ func (s *service) SaveStreamer(c echo.Context, streamerName string) (int, error)
 	}
 
 	userToStreamer := models.UserToStreamer{
+		ID:         uuid.New().String(),
 		StreamerID: streamer.ID,
 		UserID:     user.ID,
 	}
