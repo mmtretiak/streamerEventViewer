@@ -92,7 +92,7 @@ SELECT id, external_id FROM streamers WHERE name = $1;
 
 func (r *repository) GetByUserID(ctx context.Context, userID string) ([]models.Streamer, error) {
 	query := `
-SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers on streamers.id = users_to_streamers.streamer_id WHERE user_id = $1;
+SELECT streamers.id, streamers.name, streamers.external_id FROM streamers LEFT JOIN users_to_streamers on streamers.id = users_to_streamers.streamer_id WHERE user_id = $1;
 `
 	rows, err := r.db.QueryContext(ctx, query, userID)
 	if err != nil {
@@ -104,13 +104,18 @@ SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers 
 	for rows.Next() {
 		var id string
 		var name string
+		var externalID string
 
-		err := rows.Scan(&id, &name)
+		err := rows.Scan(&id, &name, &externalID)
 		if err != nil {
 			return nil, err
 		}
 
-		result = append(result, models.Streamer{ID: id, Name: name})
+		result = append(result, models.Streamer{
+			ID:         id,
+			Name:       name,
+			ExternalID: externalID,
+		})
 	}
 
 	return result, nil
