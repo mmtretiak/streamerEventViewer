@@ -4,7 +4,7 @@ import "context"
 
 type StreamerRepository interface {
 	Save(context.Context, Streamer) error
-	GetByID(context.Context, string) (Streamer, error)
+	GetByExternalID(context.Context, string) (Streamer, error)
 	GetByName(context.Context, string) (Streamer, error)
 	GetByUserID(context.Context, string) ([]Streamer, error)
 }

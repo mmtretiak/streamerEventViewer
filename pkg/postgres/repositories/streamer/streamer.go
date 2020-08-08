@@ -32,22 +32,22 @@ VALUES ($1, $2, $3);
 	return nil
 }
 
-func (r *repository) GetByID(ctx context.Context, id string) (models.Streamer, error) {
+func (r *repository) GetByExternalID(ctx context.Context, externalID string) (models.Streamer, error) {
 	query := `
-SELECT name, external_id FROM streamers WHERE id = $1;
+SELECT id, name FROM streamers WHERE external_id = $1;
 `
 
-	rows, err := r.db.QueryContext(ctx, query, id)
+	rows, err := r.db.QueryContext(ctx, query, externalID)
 	if err != nil {
 		return models.Streamer{}, err
 	}
 
 	rows.Next()
 
+	var id string
 	var name string
-	var externalID string
 
-	err = rows.Scan(&name, &externalID)
+	err = rows.Scan(&id, &name)
 	if err != nil {
 		return models.Streamer{}, err
 	}
@@ -92,7 +92,7 @@ SELECT id, external_id FROM streamers WHERE name = $1;
 
 func (r *repository) GetByUserID(ctx context.Context, userID string) ([]models.Streamer, error) {
 	query := `
-SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers on streamers.id = users_to_streamers.streamer_id WHERE user_id = $1
+SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers on streamers.id = users_to_streamers.streamer_id WHERE user_id = $1;
 `
 	rows, err := r.db.QueryContext(ctx, query, userID)
 	if err != nil {
@@ -105,7 +105,7 @@ SELECT streamers.id, streamers.name FROM streamers LEFT JOIN users_to_streamers 
 		var id string
 		var name string
 
-		err := rows.Scan(&id, name)
+		err := rows.Scan(&id, &name)
 		if err != nil {
 			return nil, err
 		}

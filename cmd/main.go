@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"github.com/labstack/echo"
 	"streamerEventViewer/cmd/config"
+	"streamerEventViewer/internal/services/clip"
+	clipTransport "streamerEventViewer/internal/services/clip/transport"
 	"streamerEventViewer/internal/services/streamer"
-	"streamerEventViewer/internal/services/streamer/transport"
+	streamerTransport "streamerEventViewer/internal/services/streamer/transport"
 	"streamerEventViewer/internal/services/user"
 	userTransport "streamerEventViewer/internal/services/user/transport"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/middleware/auth"
 	"streamerEventViewer/pkg/postgres"
+	clipRepo "streamerEventViewer/pkg/postgres/repositories/clip"
 	streamerRepo "streamerEventViewer/pkg/postgres/repositories/streamer"
 	userRepo "streamerEventViewer/pkg/postgres/repositories/user"
 	userSecretRepo "streamerEventViewer/pkg/postgres/repositories/user_secret"
@@ -31,6 +34,7 @@ func main() {
 	userSecretRepository := userSecretRepo.New(db)
 	streamerRepository := streamerRepo.New(db)
 	userToStreamerRepository := user_to_streamer.New(db)
+	clipRepository := clipRepo.New(db)
 
 	rbacService := rbac.New()
 
@@ -45,12 +49,14 @@ func main() {
 
 	userService := user.New(helixService, userRepository, userSecretRepository, jwt)
 	streamerService := streamer.New(rbacService, streamerRepository, userToStreamerRepository)
+	clipService := clip.New(helixService, rbacService, userSecretRepository, clipRepository, streamerRepository)
 
 	e := echo.New()
 	eGroup := e.Group("")
 
 	userTransport.NewHTTP(userService, eGroup)
-	transport.NewHTTP(streamerService, eGroup, authMiddleware)
+	streamerTransport.NewHTTP(streamerService, eGroup, authMiddleware)
+	clipTransport.NewHTTP(clipService, eGroup, authMiddleware)
 
 	address := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
 
