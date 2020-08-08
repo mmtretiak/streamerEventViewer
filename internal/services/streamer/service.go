@@ -145,8 +145,16 @@ func (s *service) searchForStreamer(streamerName string) (searchResponse, error)
 		return searchResp, err
 	}
 
+	var targetChannel helix.Channel
+
 	// TODO make suggestion in better way, for example return them as separate field instead of error and parse on front-end
 	if len(resp.Data.Channels) > 1 {
+		for _, channel := range resp.Data.Channels {
+			if channel.DisplayName == streamerName {
+				targetChannel = channel
+			}
+		}
+
 		errMsg := "please specify streamer name, suggestions %v"
 
 		var suggestions []string
@@ -159,6 +167,6 @@ func (s *service) searchForStreamer(streamerName string) (searchResponse, error)
 		return searchResp, errors.New(fmt.Sprintf(errMsg, suggestions))
 	}
 
-	searchResp.channel = resp.Data.Channels[0]
+	searchResp.channel = targetChannel
 	return searchResp, nil
 }
