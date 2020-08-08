@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/labstack/echo"
 	"streamerEventViewer/cmd/config"
+	"streamerEventViewer/internal/jobs"
 	"streamerEventViewer/internal/services/clip"
 	clipTransport "streamerEventViewer/internal/services/clip/transport"
 	"streamerEventViewer/internal/services/streamer"
@@ -25,6 +26,11 @@ import (
 
 func main() {
 	config := config.New()
+
+	e := echo.New()
+	e.Use(secure.CORS(), secure.Headers())
+
+	logger := e.Logger
 
 	db, err := postgres.New(config.DB)
 	if err != nil {
@@ -52,9 +58,6 @@ func main() {
 	streamerService := streamer.New(rbacService, streamerRepository, userToStreamerRepository)
 	clipService := clip.New(helixService, rbacService, userSecretRepository, clipRepository, streamerRepository)
 
-	e := echo.New()
-	e.Use(secure.CORS(), secure.Headers())
-
 	eGroup := e.Group("")
 
 	userTransport.NewHTTP(userService, eGroup)
@@ -62,6 +65,8 @@ func main() {
 	clipTransport.NewHTTP(clipService, eGroup, authMiddleware)
 
 	address := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+
+	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
 	err = e.Start(address)
 	if err != nil {
