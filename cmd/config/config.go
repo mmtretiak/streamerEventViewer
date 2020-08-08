@@ -21,8 +21,8 @@ func New() Config {
 		OauthConfig: OauthConfig{
 			RedirectURI:  "http://localhost:8080/users/login/redirect",
 			Scopes:       []string{"user:read:email", "clips:edit"},
-			ClientID:     "k9rce279ezyjl3tafvhvza6pvj55cb",
-			ClientSecret: "c60qyyfj3tijxsnau2mqy9ecpqfcl2",
+			ClientID:     "xtcnffrqknmfsmjb9fkt1ppnxijfvt",
+			ClientSecret: "pk0bdy8i1iw0ggg8reu6lwqt3063h0",
 		},
 		Server: Server{
 			Port: 8080,

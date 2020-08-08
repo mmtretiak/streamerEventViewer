@@ -16,13 +16,14 @@ type Service interface {
 }
 
 func New(helixService helixService.Service, rbacService rbac.RBACService, userSecretRepository models.UserSecretRepository,
-	clipRepository models.ClipRepository, streamerRepository models.StreamerRepository) Service {
+	clipRepository models.ClipRepository, streamerRepository models.StreamerRepository, logger echo.Logger) Service {
 	return &service{
 		helixService:         helixService,
 		rbac:                 rbacService,
 		userSecretRepository: userSecretRepository,
 		clipRepository:       clipRepository,
 		streamerRepository:   streamerRepository,
+		logger:               logger,
 	}
 }
 
@@ -32,6 +33,7 @@ type service struct {
 	userSecretRepository models.UserSecretRepository
 	clipRepository       models.ClipRepository
 	streamerRepository   models.StreamerRepository
+	logger               echo.Logger
 }
 
 func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
@@ -41,16 +43,19 @@ func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
 
 	streamer, err := s.streamerRepository.GetByExternalID(ctx, externalStreamerID)
 	if err != nil {
+		s.logger.Errorf("failed to get streamer by external ID %s, reason: %v", externalStreamerID, err)
 		return err
 	}
 
 	secret, err := s.userSecretRepository.GetByUserID(ctx, user.ID)
 	if err != nil {
+		s.logger.Errorf("failed to get user secret by user ID %s, reason: %v", user.ID, err)
 		return err
 	}
 
 	userHelixClient, err := s.helixService.NewUserClient(secret.AuthToken)
 	if err != nil {
+		s.logger.Errorf("failed to create user helix client for user ID %s, reason: %v", user.ID, err)
 		return err
 	}
 
@@ -62,6 +67,7 @@ func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
 
 	resp, err := userHelixClient.CreateClip(createClipParams)
 	if err != nil {
+		s.logger.Errorf("failed to create clip for streamer ID %s, reason: %v", externalStreamerID, err)
 		return err
 	}
 
@@ -73,7 +79,13 @@ func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
 		streamerID: streamer.ID,
 	}
 
-	return s.saveClip(ctx, saveClipReq)
+	err = s.saveClip(ctx, saveClipReq)
+	if err != nil {
+		s.logger.Errorf("failed to save clip external ID %s for streamer ID %s, reason: %v", clipInfo.ID, externalStreamerID, err)
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) GetClipsForStreamer(c echo.Context, streamerID string) ([]models.Clip, error) {
@@ -83,6 +95,7 @@ func (s *service) GetClipsForStreamer(c echo.Context, streamerID string) ([]mode
 
 	clips, err := s.clipRepository.GetByUserAndStreamerID(ctx, user.ID, streamerID)
 	if err != nil {
+		s.logger.Errorf("failed to get clip by user ID %s and streamer ID %s, reason: %v", user.ID, streamerID, err)
 		return nil, err
 	}
 

@@ -18,11 +18,13 @@ type Service interface {
 	GetStreamersForUser(echo.Context) ([]models.Streamer, error)
 }
 
-func New(rbacService rbac.RBACService, streamerRepository models.StreamerRepository, usersToStreamersRepository models.UsersToStreamerRepository) Service {
+func New(rbacService rbac.RBACService, streamerRepository models.StreamerRepository,
+	usersToStreamersRepository models.UsersToStreamerRepository, logger echo.Logger) Service {
 	return &service{
 		rbac:                      rbacService,
 		streamerRepository:        streamerRepository,
 		usersToStreamerRepository: usersToStreamersRepository,
+		logger:                    logger,
 	}
 }
 
@@ -31,6 +33,7 @@ type service struct {
 	streamerRepository        models.StreamerRepository
 	usersToStreamerRepository models.UsersToStreamerRepository
 	helixService              helixService.Service
+	logger                    echo.Logger
 }
 
 func (s *service) SaveStreamer(c echo.Context, streamerName string) (int, error) {
@@ -48,6 +51,7 @@ func (s *service) SaveStreamer(c echo.Context, streamerName string) (int, error)
 	if err != nil {
 		streamer, err = s.createStreamer(ctx, searchResp.channel)
 		if err != nil {
+			s.logger.Errorf("failed to create streamer %s, reason: %v", streamerName, err)
 			return http.StatusInternalServerError, err
 		}
 	}
@@ -59,15 +63,17 @@ func (s *service) SaveStreamer(c echo.Context, streamerName string) (int, error)
 
 	isExists, err := s.usersToStreamerRepository.IsExist(ctx, userToStreamer)
 	if err != nil {
+		s.logger.Errorf("failed to check is user to streamer relation exists, user ID %s, streamer name %s, reason: %v", user.ID, streamerName, err)
 		return http.StatusInternalServerError, err
 	}
 
 	if isExists {
-		return http.StatusInternalServerError, err
+		return http.StatusAlreadyReported, errors.New(fmt.Sprintf("user already added streamer into favourite, streamer name %s", streamerName))
 	}
 
 	err = s.usersToStreamerRepository.Save(ctx, userToStreamer)
 	if err != nil {
+		s.logger.Errorf("failed to save user to streamer relation, user ID %s, streamer name %s, reason: %v", user.ID, streamerName, err)
 		return http.StatusInternalServerError, err
 	}
 
@@ -95,6 +101,7 @@ func (s *service) GetStreamersForUser(c echo.Context) ([]models.Streamer, error)
 
 	streamers, err := s.streamerRepository.GetByUserID(ctx, user.ID)
 	if err != nil {
+		s.logger.Errorf("failed to get favorite streamers for user ID %s, reason: %v", user.ID, err)
 		return nil, err
 	}
 
@@ -111,6 +118,8 @@ func (s *service) searchForStreamer(streamerName string) (searchResponse, error)
 
 	helixClient, err := s.helixService.NewAppClient()
 	if err != nil {
+		s.logger.Errorf("failed to create app client, reason: %v", err)
+
 		searchResp.status = http.StatusInternalServerError
 		return searchResp, err
 	}
@@ -121,13 +130,18 @@ func (s *service) searchForStreamer(streamerName string) (searchResponse, error)
 
 	resp, err := helixClient.SearchChannels(searchChannels)
 	if err != nil {
+		s.logger.Errorf("failed to search for streamer %s, reason: %v", streamerName, err)
+
 		searchResp.status = http.StatusBadRequest
 		return searchResp, err
 	}
 
 	if len(resp.Data.Channels) == 0 {
+		err = errors.New(fmt.Sprintf("can not find streamer with name %s", streamerName))
+		s.logger.Error(err)
+
 		searchResp.status = http.StatusBadRequest
-		return searchResp, errors.New(fmt.Sprintf("can not find streamer with name %s", streamerName))
+		return searchResp, err
 	}
 
 	// TODO make suggestion in better way, for example return them as separate field instead of error and parse on front-end

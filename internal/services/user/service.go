@@ -17,7 +17,7 @@ const state = "test-state"
 
 type Service interface {
 	Login(c echo.Context) error
-	Redirect(c echo.Context) (models.Token, error)
+	Redirect(c echo.Context, authCode string) (models.Token, error)
 }
 
 // TokenGenerator represents token generator (jwt) interface
@@ -30,21 +30,24 @@ type service struct {
 	userRepository       models.UserRepository
 	userSecretRepository models.UserSecretRepository
 	tokenGenerator       TokenGenerator
+	logger               echo.Logger
 }
 
 func New(helixService helixService.Service, userRepo models.UserRepository, userSecretRepo models.UserSecretRepository,
-	generator TokenGenerator) Service {
+	generator TokenGenerator, logger echo.Logger) Service {
 	return &service{
 		helixService:         helixService,
 		userSecretRepository: userSecretRepo,
 		userRepository:       userRepo,
 		tokenGenerator:       generator,
+		logger:               logger,
 	}
 }
 
 func (s *service) Login(c echo.Context) error {
 	helixClient, err := s.helixService.NewAppClient()
 	if err != nil {
+		s.logger.Errorf("failed to create app client, reason: %v", err)
 		return err
 	}
 
@@ -53,16 +56,16 @@ func (s *service) Login(c echo.Context) error {
 	return c.Redirect(http.StatusTemporaryRedirect, url)
 }
 
-func (s *service) Redirect(c echo.Context) (models.Token, error) {
-	authCode := c.FormValue("code")
-
+func (s *service) Redirect(c echo.Context, authCode string) (models.Token, error) {
 	helixAppClient, err := s.helixService.NewAppClient()
 	if err != nil {
+		s.logger.Errorf("failed to create app client, reason: %v", err)
 		return models.Token{}, err
 	}
 
 	userAccessTokenResp, err := helixAppClient.GetUserAccessToken(authCode)
 	if err != nil {
+		s.logger.Errorf("failed to get user access token, reason: %v", err)
 		return models.Token{}, err
 	}
 
@@ -70,18 +73,23 @@ func (s *service) Redirect(c echo.Context) (models.Token, error) {
 
 	helixUserClient, err := s.helixService.NewUserClient(accessToken)
 	if err != nil {
+		s.logger.Errorf("failed to create user client, reason: %v", err)
 		return models.Token{}, err
 	}
 
 	userInfoResp, err := helixUserClient.GetUsers(&helix.UsersParams{})
 	if err != nil {
+		s.logger.Errorf("failed to get users info, reason: %v", err)
 		return models.Token{}, err
 	}
 
 	users := userInfoResp.Data.Users
 
 	if len(users) != 1 {
-		return models.Token{}, errors.New(fmt.Sprintf("received %v users instead of 1", len(users)))
+		err = errors.New(fmt.Sprintf("received %v users instead of 1", len(users)))
+		s.logger.Error(err)
+
+		return models.Token{}, err
 	}
 
 	user := convertUser(users[0])
@@ -92,15 +100,20 @@ func (s *service) Redirect(c echo.Context) (models.Token, error) {
 
 	token, err := s.tokenGenerator.GenerateToken(user)
 	if err != nil {
+		s.logger.Errorf("failed to generate token for user ID %s, reason: %v", user.ID, err)
+
 		return models.Token{}, err
 	}
 
 	if err := s.userRepository.Save(ctx, user); err != nil {
+		s.logger.Errorf("failed to save user ID %s, reason: %v", user.ID, err)
 		return models.Token{}, err
 	}
 
 	if err := s.userSecretRepository.Save(ctx, secret); err != nil {
 		// TODO should be deletion of user
+		s.logger.Errorf("failed to save user secret, user ID %s, secret ID %s, reason: %v", user.ID, secret.ID, err)
+
 		return models.Token{}, err
 	}
 
