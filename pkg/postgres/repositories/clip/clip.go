@@ -166,7 +166,7 @@ func (r *repository) GetTotalViewsByUserPerStreamer(ctx context.Context, userID 
 SELECT SUM(view_count) AS total, streamer_id FROM clips WHERE user_id = $1 GROUP BY streamer_id;
 `
 
-	rows, err := r.db.QueryContext(ctx, query, userID, streamerID)
+	rows, err := r.db.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}
