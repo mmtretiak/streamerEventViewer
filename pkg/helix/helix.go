@@ -28,7 +28,19 @@ func (h *helixService) NewAppClient() (*helix.Client, error) {
 		Scopes:       h.config.Scopes,
 	}
 
-	return helix.NewClient(options)
+	client, err := helix.NewClient(options)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.GetAppAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
+	client.SetAppAccessToken(resp.Data.AccessToken)
+
+	return client, nil
 }
 
 func (h *helixService) NewUserClient(userAccessToken string) (*helix.Client, error) {
