@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/labstack/echo"
-	"github.com/nicklaw5/helix"
+	"github.com/mmtretiak/helix"
 	"github.com/robfig/cron/v3"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/models"

@@ -1,7 +1,7 @@
 package helix
 
 import (
-	"github.com/nicklaw5/helix"
+	"github.com/mmtretiak/helix"
 	"streamerEventViewer/cmd/config"
 )
 

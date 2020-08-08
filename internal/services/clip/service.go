@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
-	"github.com/nicklaw5/helix"
+	"github.com/mmtretiak/helix"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/models"
 	"streamerEventViewer/pkg/rbac"

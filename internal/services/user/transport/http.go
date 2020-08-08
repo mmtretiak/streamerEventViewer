@@ -32,7 +32,7 @@ func (h *HTTP) login(c echo.Context) error {
 }
 
 func (h *HTTP) redirect(c echo.Context) error {
-	authCode := c.QueryParam("access_token")
+	authCode := c.QueryParam("code")
 
 	token, err := h.svc.Redirect(c, authCode)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
-	"github.com/nicklaw5/helix"
+	"github.com/mmtretiak/helix"
 	"net/http"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/models"
