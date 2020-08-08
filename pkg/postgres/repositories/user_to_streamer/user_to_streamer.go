@@ -36,7 +36,7 @@ func (r *repository) IsExist(ctx context.Context, userToStreamer models.UserToSt
 SELECT user_id, streamer_id FROM users_to_streamers WHERE user_id = $1 AND streamer_id = $2;
 `
 
-	_, err := r.db.QueryContext(ctx, query, userToStreamer.UserID, userToStreamer.StreamerID)
+	res, err := r.db.QueryContext(ctx, query, userToStreamer.UserID, userToStreamer.StreamerID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
@@ -45,5 +45,5 @@ SELECT user_id, streamer_id FROM users_to_streamers WHERE user_id = $1 AND strea
 		return false, err
 	}
 
-	return true, nil
+	return res.Next(), nil
 }
