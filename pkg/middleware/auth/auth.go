@@ -23,7 +23,7 @@ func Middleware(tokenParser TokenParser) echo.MiddlewareFunc {
 
 			claims := token.Claims.(jwt.MapClaims)
 
-			id := int(claims["id"].(float64))
+			id := claims["id"].(string)
 			name := claims["u"].(string)
 			email := claims["e"].(string)
 

@@ -22,13 +22,13 @@ func NewHTTP(svc user.Service, r *echo.Group) {
 }
 
 func (h *HTTP) login(c echo.Context) error {
-	err := h.svc.Login(c)
+	url, err := h.svc.Login(c)
 	if err != nil {
 		// TODO provide better error codes
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, url)
 }
 
 func (h *HTTP) redirect(c echo.Context) error {

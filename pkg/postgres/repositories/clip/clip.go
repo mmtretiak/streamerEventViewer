@@ -106,7 +106,7 @@ SELECT id, external_id, edit_url, user_id, streamer_id views FROM clips;
 
 func (r *repository) UpdateViewCountByExternalID(ctx context.Context, externalID string, viewCount int) error {
 	query := `
-UPDATE clips SET viewCount = $1 WHERE external_id = $2;
+UPDATE clips SET view_count = $1 WHERE external_id = $2;
 `
 
 	_, err := r.db.ExecContext(ctx, query, viewCount, externalID)
@@ -115,4 +115,75 @@ UPDATE clips SET viewCount = $1 WHERE external_id = $2;
 	}
 
 	return nil
+}
+
+func (r *repository) GetTotalViewsByUserID(ctx context.Context, userID string) (int, error) {
+	query := `
+SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1;
+`
+
+	rows, err := r.db.QueryContext(ctx, query, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	rows.Next()
+
+	var total int
+
+	err = rows.Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}
+
+func (r *repository) GetTotalViewsByUserAndStreamerID(ctx context.Context, userID, streamerID string) (int, error) {
+	query := `
+SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1 AND streamer_id = $2;
+`
+
+	rows, err := r.db.QueryContext(ctx, query, userID, streamerID)
+	if err != nil {
+		return 0, err
+	}
+
+	rows.Next()
+
+	var total int
+
+	err = rows.Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}
+
+func (r *repository) GetTotalViewsByUserPerStreamer(ctx context.Context, userID string) (map[string]int, error) {
+	query := `
+SELECT SUM(view_count) AS total, streamer_id FROM clips WHERE user_id = $1 GROUP BY streamer_id;
+`
+
+	rows, err := r.db.QueryContext(ctx, query, userID, streamerID)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make(map[string]int)
+
+	for rows.Next() {
+		var total int
+		var streamerID string
+
+		err = rows.Scan(&total, streamerID)
+		if err != nil {
+			return nil, err
+		}
+
+		result[streamerID] = total
+	}
+
+	return result, nil
 }

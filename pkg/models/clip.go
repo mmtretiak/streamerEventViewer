@@ -17,4 +17,7 @@ type ClipRepository interface {
 	GetByUserAndStreamerID(ctx context.Context, userID, streamerID string) ([]Clip, error)
 	GetAll(context.Context) ([]Clip, error)
 	UpdateViewCountByExternalID(ctx context.Context, externalID string, viewCount int) error
+	GetTotalViewsByUserID(ctx context.Context, userID string) (int, error)
+	GetTotalViewsByUserAndStreamerID(ctx context.Context, userID, streamerID string) (int, error)
+	GetTotalViewsByUserPerStreamer(cctx context.Context, userID string) (map[string]int, error)
 }

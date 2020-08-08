@@ -13,6 +13,9 @@ import (
 type Service interface {
 	SaveClip(c echo.Context, externalStreamerID string) error
 	GetClipsForStreamer(c echo.Context, streamerID string) ([]models.Clip, error)
+	GetTotalViews(c echo.Context) (TotalViewsResp, error)
+	GetTotalViewsByStreamer(c echo.Context, streamerID string) (TotalViewsResp, error)
+	GetTotalViewsPerStreamer(c echo.Context) ([]TotalViewsByStreamer, error)
 }
 
 func New(helixService helixService.Service, rbacService rbac.RBACService, userSecretRepository models.UserSecretRepository,
@@ -36,14 +39,14 @@ type service struct {
 	logger               echo.Logger
 }
 
-func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
+func (s *service) SaveClip(c echo.Context, streamerID string) error {
 	user := s.rbac.User(c)
 
 	ctx := context.Background()
 
-	streamer, err := s.streamerRepository.GetByExternalID(ctx, externalStreamerID)
+	streamer, err := s.streamerRepository.GetByID(ctx, streamerID)
 	if err != nil {
-		s.logger.Errorf("failed to get streamer by external ID %s, reason: %v", externalStreamerID, err)
+		s.logger.Errorf("failed to get streamer ID %s, reason: %v", streamerID, err)
 		return err
 	}
 
@@ -60,14 +63,14 @@ func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
 	}
 
 	createClipParams := &helix.CreateClipParams{
-		BroadcasterID: externalStreamerID,
+		BroadcasterID: streamer.ExternalID,
 		// TODO provide this in request, so user would have choice
 		HasDelay: false,
 	}
 
 	resp, err := userHelixClient.CreateClip(createClipParams)
 	if err != nil {
-		s.logger.Errorf("failed to create clip for streamer ID %s, reason: %v", externalStreamerID, err)
+		s.logger.Errorf("failed to create clip for streamer ID %s, reason: %v", streamerID, err)
 		return err
 	}
 
@@ -81,7 +84,7 @@ func (s *service) SaveClip(c echo.Context, externalStreamerID string) error {
 
 	err = s.saveClip(ctx, saveClipReq)
 	if err != nil {
-		s.logger.Errorf("failed to save clip external ID %s for streamer ID %s, reason: %v", clipInfo.ID, externalStreamerID, err)
+		s.logger.Errorf("failed to save clip external ID %s for streamer ID %s, reason: %v", clipInfo.ID, streamerID, err)
 		return err
 	}
 
@@ -118,4 +121,56 @@ func (s *service) saveClip(ctx context.Context, req saveClipReq) error {
 	}
 
 	return s.clipRepository.Save(ctx, clip)
+}
+
+func (s *service) GetTotalViews(c echo.Context) (TotalViewsResp, error) {
+	user := s.rbac.User(c)
+
+	ctx := context.Background()
+
+	total, err := s.clipRepository.GetTotalViewsByUserID(ctx, user.ID)
+	if err != nil {
+		s.logger.Errorf("failed to get total views for user ID %s, reason %v", user.ID, err)
+		return TotalViewsResp{}, err
+	}
+
+	return TotalViewsResp{Count: total}, nil
+}
+
+func (s *service) GetTotalViewsByStreamer(c echo.Context, streamerID string) (TotalViewsResp, error) {
+	user := s.rbac.User(c)
+
+	ctx := context.Background()
+
+	total, err := s.clipRepository.GetTotalViewsByUserAndStreamerID(ctx, user.ID, streamerID)
+	if err != nil {
+		s.logger.Errorf("failed to get total views for user ID %s, streamer ID %s, reason: %v", user.ID, streamerID, err)
+		return TotalViewsResp{}, err
+	}
+
+	return TotalViewsResp{Count: total}, nil
+}
+
+func (s *service) GetTotalViewsPerStreamer(c echo.Context) ([]TotalViewsByStreamer, error) {
+	user := s.rbac.User(c)
+
+	ctx := context.Background()
+
+	viewsPerStreamer, err := s.clipRepository.GetTotalViewsByUserPerStreamer(ctx, user.ID)
+	if err != nil {
+		s.logger.Errorf("failed to get total views for user ID %s per streamer, reason: %v", user.ID, err)
+		return nil, err
+	}
+
+	var resp []TotalViewsByStreamer
+
+	// TODO should be optimized by adding TotalViews structure into models package
+	for streamerID, views := range viewsPerStreamer {
+		resp = append(resp, TotalViewsByStreamer{
+			StreamerID: streamerID,
+			Count:      views,
+		})
+	}
+
+	return resp, nil
 }

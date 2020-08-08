@@ -18,17 +18,19 @@ func NewHTTP(svc clip.Service, r *echo.Group, jwtMiddleware echo.MiddlewareFunc)
 	ur := r.Group("/clips")
 	ur.Use(jwtMiddleware)
 
-	// TODO should use consist way(one type of ids for each request)
-	// id - external(twitch) id for streamer
 	ur.POST("/{id}", h.saveClip)
-	// id - our own generated streamer id
 	ur.GET("/{id}", h.getClipsForStreamer)
+
+	views := ur.Group("/views")
+
+	views.GET("", h.getTotalViews)
+	views.GET("/{id}", h.getTotalViewsByStreamer)
 }
 
 func (h *HTTP) saveClip(c echo.Context) error {
-	externalStreamerID := c.Param("id")
+	streamerID := c.Param("id")
 
-	err := h.svc.SaveClip(c, externalStreamerID)
+	err := h.svc.SaveClip(c, streamerID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
@@ -45,4 +47,32 @@ func (h *HTTP) getClipsForStreamer(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, clips)
+}
+
+func (h *HTTP) getTotalViewsByStreamer(c echo.Context) error {
+	streamerID := c.Param("id")
+
+	total, err := h.svc.GetTotalViewsByStreamer(c, streamerID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	resp := clip.TotalViewsResp{
+		Total: total,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+func (h *HTTP) getTotalViews(c echo.Context) error {
+	total, err := h.svc.GetTotalViews(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	resp := clip.TotalViewsResp{
+		Total: total,
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }

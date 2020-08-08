@@ -32,22 +32,22 @@ VALUES ($1, $2, $3);
 	return nil
 }
 
-func (r *repository) GetByExternalID(ctx context.Context, externalID string) (models.Streamer, error) {
+func (r *repository) GetByID(ctx context.Context, id string) (models.Streamer, error) {
 	query := `
-SELECT id, name FROM streamers WHERE external_id = $1;
+SELECT external_id, name FROM streamers WHERE id = $1;
 `
 
-	rows, err := r.db.QueryContext(ctx, query, externalID)
+	rows, err := r.db.QueryContext(ctx, query, id)
 	if err != nil {
 		return models.Streamer{}, err
 	}
 
 	rows.Next()
 
-	var id string
+	var externalID string
 	var name string
 
-	err = rows.Scan(&id, &name)
+	err = rows.Scan(&externalID, &name)
 	if err != nil {
 		return models.Streamer{}, err
 	}

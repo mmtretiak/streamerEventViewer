@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
 	"github.com/mmtretiak/helix"
-	"net/http"
 	helixService "streamerEventViewer/pkg/helix"
 	"streamerEventViewer/pkg/models"
 )
@@ -16,7 +15,7 @@ import (
 const state = "test-state"
 
 type Service interface {
-	Login(c echo.Context) error
+	Login(c echo.Context) (string, error)
 	Redirect(c echo.Context, authCode string) (models.Token, error)
 }
 
@@ -44,16 +43,14 @@ func New(helixService helixService.Service, userRepo models.UserRepository, user
 	}
 }
 
-func (s *service) Login(c echo.Context) error {
+func (s *service) Login(c echo.Context) (string, error) {
 	helixClient, err := s.helixService.NewAppClient()
 	if err != nil {
 		s.logger.Errorf("failed to create app client, reason: %v", err)
-		return err
+		return "", err
 	}
 
-	url := helixClient.GetAuthorizationURL(state, true)
-
-	return c.Redirect(http.StatusTemporaryRedirect, url)
+	return helixClient.GetAuthorizationURL(state, true), nil
 }
 
 func (s *service) Redirect(c echo.Context, authCode string) (models.Token, error) {
