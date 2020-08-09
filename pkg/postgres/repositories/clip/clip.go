@@ -182,7 +182,7 @@ SELECT SUM(view_count) AS total, streamer_id FROM clips WHERE user_id = $1 GROUP
 		var total int
 		var streamerID string
 
-		err = rows.Scan(&total, streamerID)
+		err = rows.Scan(&total, &streamerID)
 		if err != nil {
 			return nil, err
 		}
