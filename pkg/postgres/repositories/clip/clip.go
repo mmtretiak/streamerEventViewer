@@ -3,6 +3,7 @@ package clip
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"streamerEventViewer/pkg/models"
 )
 
@@ -127,7 +128,9 @@ SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1;
 		return 0, err
 	}
 
-	rows.Next()
+	if !rows.Next() {
+		return 0, nil
+	}
 
 	var total int
 
@@ -149,7 +152,9 @@ SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1 AND streamer_id = 
 		return 0, err
 	}
 
-	rows.Next()
+	if !rows.Next() {
+		return 0, nil
+	}
 
 	var total int
 
