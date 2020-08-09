@@ -24,8 +24,8 @@ func NewHTTP(svc clip.Service, r *echo.Group, jwtMiddleware echo.MiddlewareFunc)
 	views := ur.Group("/views")
 
 	views.GET("", h.getTotalViews)
-	views.GET("/:id", h.getTotalViewsByStreamer)
-	views.GET("/perStreamer/", h.getTotalViewsPerStreamer)
+	views.GET("/perStreamer/:id", h.getTotalViewsByStreamer)
+	views.GET("/perStreamer", h.getTotalViewsPerStreamer)
 }
 
 func (h *HTTP) saveClip(c echo.Context) error {
