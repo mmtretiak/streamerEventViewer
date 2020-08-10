@@ -1,0 +1,42 @@
+<mat-sidenav-container fullscreen>
+  <mat-sidenav mode="side" #sidenav opened position="start">
+    <p>Total views: <mat-icon style="font-size: 12px; width: 12px; height: 12px;margin-right: 5px;">remove_red_eye</mat-icon>{{totalViews}}</p>
+    <button mat-button (click)="openDialog()">Add +</button>
+    <mat-list>
+      <a mat-list-item *ngFor="let streamer of streamers" fxLayout="space-between">
+        <div (click)="changeStreamer(streamer.name)" style="color: white; cursor: pointer; margin-right: 20px;" fxLayout="space-between">{{this.streamer.name}}</div>
+        <div style="color: white" fxLayout="end"> <mat-icon style="font-size: 16px; width: 16px; height: 16px;margin-right: 5px;">remove_red_eye</mat-icon>{{this.streamer.totalViews}}</div>
+      </a>
+    </mat-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      StreamerEventViewer
+      <span class="toolbar-spacer"></span>
+    </mat-toolbar>
+    <div class="main-content" fxLayout="column">
+      <div fxLayout="row">
+        <iframe *ngIf="activeStreamer != null"
+                [src]="activeStreamer.streamURL | safe"
+                height="720"
+                width="1280"
+                frameborder="0"
+                scrolling="no"
+                allowfullscreen="true">
+        </iframe>
+        <iframe *ngIf="activeStreamer != null"
+                frameborder="0"
+                scrolling="no"
+                id="chat_embed"
+                [src]="activeStreamer.chatURL | safe"
+                height="720"
+                width="350">
+        </iframe>
+      </div>
+      <button mat-button (click)="createClip()">Create clip</button>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

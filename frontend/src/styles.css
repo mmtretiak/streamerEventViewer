@@ -1,0 +1,54 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+snack-bar-container.success {
+  background-color: #5cb85c;
+  color: #fff;
+}
+snack-bar-container.warn {
+  background-color: #ce3232;
+  color: #fff;
+}
+snack-bar-container.info {
+  background-color: #259cc0;
+  color: #fff;
+}
+snack-bar-container.notification simple-snack-bar {
+  font-size: 15px !important;
+  justify-content: center;
+}
+.auth-container {
+  display: flex;
+  flex-direction: column;
+}
+snack-bar-container.success {
+  background-color: #5cb85c;
+  color: #fff;
+}
+snack-bar-container.warn {
+  background-color: #ce3232;
+  color: #fff;
+}
+snack-bar-container.notification simple-snack-bar {
+  font-size: 15px !important;
+  justify-content: center;
+}
+.auth-container {
+  display: flex;
+  flex-direction: column;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+.default-side-margin {
+  margin-left: 12%;
+  margin-right: 12%;
+}
+.color-background {
+  background-color: #F9F9F9;
+}

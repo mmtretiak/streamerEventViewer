@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Add new streamer</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Streamer name</mat-label>
+    <input matInput [(ngModel)]="name">
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Close</button>
+  <button mat-button (click)="submit()">Submit</button>
+</div>
