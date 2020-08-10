@@ -3,7 +3,6 @@ package clip
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"streamerEventViewer/pkg/models"
 )
 
