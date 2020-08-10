@@ -119,7 +119,7 @@ UPDATE clips SET view_count = $1 WHERE external_id = $2;
 
 func (r *repository) GetTotalViewsByUserID(ctx context.Context, userID string) (int, error) {
 	query := `
-SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1;
+SELECT COALESCE(SUM(view_count), 0) AS total FROM clips WHERE user_id = $1;
 `
 
 	rows, err := r.db.QueryContext(ctx, query, userID)
@@ -143,7 +143,7 @@ SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1;
 
 func (r *repository) GetTotalViewsByUserAndStreamerID(ctx context.Context, userID, streamerID string) (int, error) {
 	query := `
-SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1 AND streamer_id = $2;
+SELECT COALESCE(SUM(view_count), 0) AS total FROM clips WHERE user_id = $1 AND streamer_id = $2;
 `
 
 	rows, err := r.db.QueryContext(ctx, query, userID, streamerID)
@@ -167,7 +167,7 @@ SELECT SUM(view_count) AS total FROM clips WHERE user_id = $1 AND streamer_id = 
 
 func (r *repository) GetTotalViewsByUserPerStreamer(ctx context.Context, userID string) (map[string]int, error) {
 	query := `
-SELECT SUM(view_count) AS total, streamer_id FROM clips WHERE user_id = $1 GROUP BY streamer_id;
+SELECT COALESCE(SUM(view_count), 0) AS total, streamer_id FROM clips WHERE user_id = $1 GROUP BY streamer_id;
 `
 
 	rows, err := r.db.QueryContext(ctx, query, userID)
