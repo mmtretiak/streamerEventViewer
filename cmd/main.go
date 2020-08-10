@@ -37,6 +37,8 @@ func main() {
 		panic(err)
 	}
 
+	_, err = db.Exec("SELECT * FROM test")
+	fmt.Println(err)
 	userRepository := userRepo.New(db)
 	userSecretRepository := userSecretRepo.New(db)
 	streamerRepository := streamerRepo.New(db)
