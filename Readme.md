@@ -35,6 +35,7 @@ streamer would have more requests than user functionallity
 * S3 used for static resources
 * Route 53 used as DNS manager
 * EC2 Scalling groups could be replaced by EKS/ECS/Fargate
+* AWS Lambda for cron Jobs
 
 # Bottlenecks
 * Dependency on third-part API(Twitch) which has global rate limits
