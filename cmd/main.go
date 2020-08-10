@@ -38,11 +38,6 @@ func main() {
 		panic(err)
 	}
 
-	_, err = db.Exec("select * from users")
-	if err != nil {
-		logger.Error(err)
-	}
-
 	userRepository := userRepo.New(db)
 	userSecretRepository := userSecretRepo.New(db)
 	streamerRepository := streamerRepo.New(db)
