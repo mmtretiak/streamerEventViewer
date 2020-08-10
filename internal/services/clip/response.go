@@ -4,7 +4,11 @@ type TotalViewsResp struct {
 	Count int `json:"count"`
 }
 
-type TotalViewsByStreamer struct {
+type TotalViewsByStreamerResp struct {
 	StreamerID string `json:"streamer_id"`
 	Count      int    `json:"count"`
+}
+
+type CreateClipResp struct {
+	EditURL string `json:"edit_url"`
 }

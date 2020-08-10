@@ -31,12 +31,12 @@ func NewHTTP(svc clip.Service, r *echo.Group, jwtMiddleware echo.MiddlewareFunc)
 func (h *HTTP) saveClip(c echo.Context) error {
 	streamerID := c.Param("id")
 
-	err := h.svc.SaveClip(c, streamerID)
+	resp, err := h.svc.SaveClip(c, streamerID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.JSON(http.StatusOK, resp)
 }
 
 func (h *HTTP) getClipsForStreamer(c echo.Context) error {
