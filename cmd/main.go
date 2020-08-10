@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo"
+	"os"
 	"streamerEventViewer/cmd/config"
 	"streamerEventViewer/internal/jobs"
 	"streamerEventViewer/internal/services/clip"
@@ -37,6 +38,11 @@ func main() {
 		panic(err)
 	}
 
+	_, err = db.Exec("select * from users")
+	if err != nil {
+		logger.Error(err)
+	}
+
 	userRepository := userRepo.New(db)
 	userSecretRepository := userSecretRepo.New(db)
 	streamerRepository := streamerRepo.New(db)
@@ -64,7 +70,12 @@ func main() {
 	streamerTransport.NewHTTP(streamerService, eGroup, authMiddleware)
 	clipTransport.NewHTTP(clipService, eGroup, authMiddleware)
 
-	address := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = fmt.Sprintf("%d", config.Server.Port)
+	}
+
+	address := fmt.Sprintf("%s:%s", config.Server.Host, port)
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
