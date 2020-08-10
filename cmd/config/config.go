@@ -11,12 +11,12 @@ func New() Config {
 			TTLMinutes: 10080, // 7 days for now
 		},
 		DB: DB{
-			User:     "mmtretiak",
-			Password: "postgres",
-			Dialect:  "postgres",
-			DBName:   "develop",
+			User:     "",
+			Password: "",
+			Dialect:  "",
+			DBName:   "d23ai2sqpp4msf\n",
 			Port:     5432,
-			Host:     "localhost",
+			Host:     "postgres://ekmpurbdahqpxu:f742938edd83ce5c06e08d620f2f7d00b36eac075bf8aa1ecd1eb657ede373b6@ec2-52-1-95-247.compute-1.amazonaws.com",
 		},
 		OauthConfig: OauthConfig{
 			RedirectURI:  "http://localhost:4200/redirect",
