@@ -85,7 +85,7 @@ func GetAddress(config config.Server) string {
 	var port = os.Getenv("PORT")
 	// Set a default port if there is nothing in the environment
 	if port == "" {
-		return fmt.Sprintf("%s:%s", config.Host, config.Port)
+		return fmt.Sprintf("%s:%d", config.Host, config.Port)
 	}
 
 	return ":" + port

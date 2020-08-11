@@ -1,10 +1,5 @@
 package config
 
-import (
-	"github.com/robfig/cron/v3"
-	"time"
-)
-
 // for now simply return mocked structure instead of reading from config file or cloud secrets
 func New() Config {
 	return Config{
@@ -33,10 +28,7 @@ func New() Config {
 		},
 		Jobs: Jobs{
 			ViewUpdaterJob: ViewUpdaterJob{
-				Schedule: &cron.SpecSchedule{
-					Hour:   uint64(time.Now().Hour()),
-					Minute: uint64(time.Now().Minute() + 3),
-				},
+				Schedule: "0 12 * * *",
 			},
 		},
 	}
@@ -85,5 +77,5 @@ type Jobs struct {
 }
 
 type ViewUpdaterJob struct {
-	Schedule *cron.SpecSchedule `json:"schedule"`
+	Schedule string `json:"schedule"`
 }
