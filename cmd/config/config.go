@@ -1,6 +1,9 @@
 package config
 
-import "github.com/robfig/cron/v3"
+import (
+	"github.com/robfig/cron/v3"
+	"time"
+)
 
 // for now simply return mocked structure instead of reading from config file or cloud secrets
 func New() Config {
@@ -31,8 +34,8 @@ func New() Config {
 		Jobs: Jobs{
 			ViewUpdaterJob: ViewUpdaterJob{
 				Schedule: &cron.SpecSchedule{
-					Hour:   12,
-					Minute: 0,
+					Hour:   uint64(time.Now().Hour()),
+					Minute: uint64(time.Now().Minute() + 3),
 				},
 			},
 		},
