@@ -1,7 +1,5 @@
 package config
 
-import "github.com/robfig/cron/v3"
-
 // for now simply return mocked structure instead of reading from config file or cloud secrets
 func New() Config {
 	return Config{
@@ -14,12 +12,12 @@ func New() Config {
 			User:     "mmtretiak",
 			Password: "postgres",
 			Dialect:  "postgres",
-			DBName:   "develop",
+			DBName:   "d23ai2sqpp4msf\n",
 			Port:     5432,
 			Host:     "localhost",
 		},
 		OauthConfig: OauthConfig{
-			RedirectURI:  "http://localhost:4200/redirect",
+			RedirectURI:  "https://stark-escarpment-52058.herokuapp.com/redirect",
 			Scopes:       []string{"user:read:email", "clips:edit"},
 			ClientID:     "k9rce279ezyjl3tafvhvza6pvj55cb",
 			ClientSecret: "c60qyyfj3tijxsnau2mqy9ecpqfcl2",
@@ -30,10 +28,7 @@ func New() Config {
 		},
 		Jobs: Jobs{
 			ViewUpdaterJob: ViewUpdaterJob{
-				Schedule: &cron.SpecSchedule{
-					Hour:   12,
-					Minute: 0,
-				},
+				Schedule: "0 12 * * *",
 			},
 		},
 	}
@@ -82,5 +77,5 @@ type Jobs struct {
 }
 
 type ViewUpdaterJob struct {
-	Schedule *cron.SpecSchedule `json:"schedule"`
+	Schedule string `json:"schedule"`
 }
