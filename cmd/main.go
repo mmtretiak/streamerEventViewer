@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 	"os"
 	"streamerEventViewer/cmd/config"
 	"streamerEventViewer/internal/jobs"
@@ -32,6 +33,7 @@ func main() {
 	e.Use(secure.CORS(), secure.Headers())
 
 	logger := e.Logger
+	logger.SetLevel(log.INFO)
 
 	db, err := postgres.New(config.DB)
 	if err != nil {
