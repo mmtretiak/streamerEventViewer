@@ -71,7 +71,7 @@ func main() {
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
-	e.Static("/", "../frontend/dist/twitch-frontend/index.html")
+	e.Static("/", "./dist/index.html")
 
 	err = e.Start(address)
 	if err != nil {
