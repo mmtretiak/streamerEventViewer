@@ -87,7 +87,7 @@ SELECT id, external_id, edit_url, user_id, streamer_id FROM clips;
 		var userID string
 		var streamerID string
 
-		err := rows.Scan(&id, &externalID, &editURL, &userID, streamerID)
+		err := rows.Scan(&id, &externalID, &editURL, &userID, &streamerID)
 		if err != nil {
 			return nil, err
 		}
