@@ -19,7 +19,7 @@ func New() Config {
 			Host:     "postgres://ekmpurbdahqpxu:f742938edd83ce5c06e08d620f2f7d00b36eac075bf8aa1ecd1eb657ede373b6@ec2-52-1-95-247.compute-1.amazonaws.com",
 		},
 		OauthConfig: OauthConfig{
-			RedirectURI:  "http://localhost:4200/redirect",
+			RedirectURI:  "https://stark-escarpment-52058.herokuapp.co/redirect",
 			Scopes:       []string{"user:read:email", "clips:edit"},
 			ClientID:     "k9rce279ezyjl3tafvhvza6pvj55cb",
 			ClientSecret: "c60qyyfj3tijxsnau2mqy9ecpqfcl2",
