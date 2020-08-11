@@ -67,7 +67,7 @@ func main() {
 
 	port := GetPort()
 
-	address := fmt.Sprintf("%s:%s", config.Server.Host, port)
+	address := fmt.Sprintf(":%s", port)
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
