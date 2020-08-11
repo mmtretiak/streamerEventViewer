@@ -65,9 +65,7 @@ func main() {
 	streamerTransport.NewHTTP(streamerService, eGroup, authMiddleware)
 	clipTransport.NewHTTP(clipService, eGroup, authMiddleware)
 
-	port := GetPort()
-
-	address := fmt.Sprintf(":%s", port)
+	address := GetAddress(config.Server)
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
@@ -83,12 +81,12 @@ func main() {
 	}
 }
 
-func GetPort() string {
+func GetAddress(config config.Server) string {
 	var port = os.Getenv("PORT")
 	// Set a default port if there is nothing in the environment
 	if port == "" {
-		port = "8080"
-		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+		return fmt.Sprintf("%s:%s", config.Host, config.Port)
 	}
-	return port
+
+	return ":" + port
 }

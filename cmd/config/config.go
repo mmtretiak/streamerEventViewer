@@ -11,15 +11,15 @@ func New() Config {
 			TTLMinutes: 10080, // 7 days for now
 		},
 		DB: DB{
-			User:     "",
-			Password: "",
-			Dialect:  "",
+			User:     "mmtretiak",
+			Password: "postgres",
+			Dialect:  "postgres",
 			DBName:   "d23ai2sqpp4msf\n",
 			Port:     5432,
-			Host:     "postgres://ekmpurbdahqpxu:f742938edd83ce5c06e08d620f2f7d00b36eac075bf8aa1ecd1eb657ede373b6@ec2-52-1-95-247.compute-1.amazonaws.com",
+			Host:     "localhost",
 		},
 		OauthConfig: OauthConfig{
-			RedirectURI:  "https://stark-escarpment-52058.herokuapp.co/redirect",
+			RedirectURI:  "https://stark-escarpment-52058.herokuapp.com/redirect",
 			Scopes:       []string{"user:read:email", "clips:edit"},
 			ClientID:     "k9rce279ezyjl3tafvhvza6pvj55cb",
 			ClientSecret: "c60qyyfj3tijxsnau2mqy9ecpqfcl2",
