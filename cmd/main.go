@@ -71,7 +71,8 @@ func main() {
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
-	e.File("/", "./dist/index.html")
+	e.Static("/dist", "dist")
+	e.File("/*", "dist/index.html")
 
 	err = e.Start(address)
 	if err != nil {
