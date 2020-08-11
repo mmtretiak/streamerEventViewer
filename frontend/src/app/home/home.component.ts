@@ -33,8 +33,8 @@ export class HomeComponent implements OnInit {
       this.clipService.getTotalViewsPerStreamer().subscribe((viewsRes) => {
         this.streamers = res as streamer[];
         this.streamers.map(x => {
-          x.streamURL = 'https://player.twitch.tv/?channel=' + x.name + '&parent=localhost&muted=true';
-          x.chatURL = 'https://www.twitch.tv/embed/' + x.name + '/chat?parent=localhost';
+          x.streamURL = 'https://player.twitch.tv/?channel=' + x.name + '&parent=stark-escarpment-52058.herokuapp.com&muted=true';
+          x.chatURL = 'https://www.twitch.tv/embed/' + x.name + '/chat?parent=stark-escarpment-52058.herokuapp.com';
           if (viewsRes === null) {
             x.totalViews = 0;
           } else {

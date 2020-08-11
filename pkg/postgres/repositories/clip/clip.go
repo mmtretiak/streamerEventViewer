@@ -71,7 +71,7 @@ SELECT id, external_id, edit_url, view_count FROM clips WHERE user_id = $1 AND s
 
 func (r *repository) GetAll(ctx context.Context) ([]models.Clip, error) {
 	query := `
-SELECT id, external_id, edit_url, user_id, streamer_id views FROM clips;
+SELECT id, external_id, edit_url, user_id, streamer_id FROM clips;
 `
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -87,7 +87,7 @@ SELECT id, external_id, edit_url, user_id, streamer_id views FROM clips;
 		var userID string
 		var streamerID string
 
-		err := rows.Scan(&id, &externalID, &editURL, &userID, streamerID)
+		err := rows.Scan(&id, &externalID, &editURL, &userID, &streamerID)
 		if err != nil {
 			return nil, err
 		}

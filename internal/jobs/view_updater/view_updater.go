@@ -30,11 +30,15 @@ func New(clipRepository models.ClipRepository, helixService helixService.Service
 func (v *viewUpdater) Run() {
 	ctx := context.Background()
 
+	v.logger.Info("View Updater started")
+
 	clips, err := v.getClips(ctx)
 	if err != nil {
 		v.logger.Error(err)
 		return
 	}
+
+	v.logger.Infof("Updating %d clips", len(clips))
 
 	v.updateClipViews(ctx, clips)
 }

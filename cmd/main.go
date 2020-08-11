@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
+	"os"
 	"streamerEventViewer/cmd/config"
 	"streamerEventViewer/internal/jobs"
 	"streamerEventViewer/internal/services/clip"
@@ -31,6 +33,7 @@ func main() {
 	e.Use(secure.CORS(), secure.Headers())
 
 	logger := e.Logger
+	logger.SetLevel(log.INFO)
 
 	db, err := postgres.New(config.DB)
 	if err != nil {
@@ -64,12 +67,28 @@ func main() {
 	streamerTransport.NewHTTP(streamerService, eGroup, authMiddleware)
 	clipTransport.NewHTTP(clipService, eGroup, authMiddleware)
 
-	address := fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port)
+	address := GetAddress(config.Server)
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
+
+	echo.NotFoundHandler = func(c echo.Context) error {
+		return c.File("cmd/dist/index.html")
+	}
+
+	e.Static("/", "cmd/dist")
 
 	err = e.Start(address)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func GetAddress(config config.Server) string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		return fmt.Sprintf("%s:%d", config.Host, config.Port)
+	}
+
+	return ":" + port
 }
