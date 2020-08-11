@@ -71,8 +71,11 @@ func main() {
 
 	go jobs.StartJobs(config.Jobs, clipRepository, helixService, logger)
 
-	e.Static("/dist", "dist")
-	e.File("/*", "dist/index.html")
+	echo.NotFoundHandler = func(c echo.Context) error {
+		return c.File("dist/index.html")
+	}
+
+	e.Static("/", "dist")
 
 	err = e.Start(address)
 	if err != nil {
