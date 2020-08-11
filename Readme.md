@@ -27,6 +27,7 @@ streamer would have more requests than user functionallity
 8. View count should be cached, since we update it in cron job
 9. Error codes should be improved
 10. Error messages should be improved
+11. Token refreshing both for Twitch API and our JWT token
 
 # Architecture
 ![Architecture](Architecture.png)
