@@ -28,7 +28,7 @@ func New() Config {
 		},
 		Jobs: Jobs{
 			ViewUpdaterJob: ViewUpdaterJob{
-				Schedule: "54 8 * * *",
+				Schedule: "58 8 * * *",
 			},
 		},
 	}
